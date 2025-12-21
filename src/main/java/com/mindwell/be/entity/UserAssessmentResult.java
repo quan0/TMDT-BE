@@ -1,5 +1,6 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.AssessmentCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,5 +24,7 @@ public class UserAssessmentResult {
     private Assessment assessment;
 
     private Integer totalScore;
-    private String category;
+
+    @Enumerated(EnumType.STRING)
+    private AssessmentCategory category;
 }

@@ -1,5 +1,6 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -21,6 +22,8 @@ public class Expert {
     private String title;
     private BigDecimal hourlyRate;
     private Boolean isVerified;
-    private String gender;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 }
 

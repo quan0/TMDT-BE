@@ -52,7 +52,7 @@ public class ExpertDetailService {
                 expert.getTitle(),
                 expert.getHourlyRate(),
                 expert.getIsVerified(),
-                expert.getGender(),
+            expert.getGender() == null ? null : expert.getGender().toJson(),
                 avgRating,
                 reviewCount,
                 languages,

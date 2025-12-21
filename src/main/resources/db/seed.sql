@@ -113,13 +113,15 @@ INSERT INTO payment_methods (method_key, display_name, badge_label, is_active) V
   ('vnpay', 'VNPay', 'VNPay', TRUE),
   ('momo', 'MoMo', 'MoMo', TRUE),
   ('zalopay', 'ZaloPay', 'ZaloPay', TRUE),
+  ('card', 'Thẻ tín dụng / Ghi nợ', 'CARD', TRUE),
+  ('mindpoints', 'MindPoints', 'POINTS', TRUE),
   ('cash', 'Cash', 'Cash', TRUE)
 ON CONFLICT (method_key) DO NOTHING;
 
 INSERT INTO subscriptions (name, price, billing_cycle, tier_subtitle, badge_label, short_desc, features, is_active) VALUES
-  ('Basic', 99000, 'monthly', 'Starter', 'BASIC', 'For new users', 'Feature A\nFeature B', TRUE),
-  ('Premium', 199000, 'monthly', 'Most Popular', 'PRO', 'More sessions & benefits', 'Feature A\nFeature B\nFeature C', TRUE),
-  ('Premium Annual', 1990000, 'yearly', 'Best Value', 'PRO+', 'Best price per month', 'Feature A\nFeature B\nFeature C\nFeature D', TRUE)
+  ('Basic', 99000, 'MONTHLY', 'Starter', 'BASIC', 'For new users', 'Feature A\nFeature B', TRUE),
+  ('Premium', 199000, 'MONTHLY', 'Most Popular', 'PRO', 'More sessions & benefits', 'Feature A\nFeature B\nFeature C', TRUE),
+  ('Premium Annual', 1990000, 'YEARLY', 'Best Value', 'PRO+', 'Best price per month', 'Feature A\nFeature B\nFeature C\nFeature D', TRUE)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO mind_point_purchase_options (points_amount, price_vnd, name, description, badge_label, is_active) VALUES
@@ -143,11 +145,11 @@ ON CONFLICT DO NOTHING;
 
 -- Assessments (categories are unique)
 INSERT INTO assessments (title, category) VALUES
-  ('Anxiety Screening', 'anxiety'),
-  ('Depression Screening', 'depression'),
-  ('Stress Check', 'stress'),
-  ('Sleep Quality', 'sleep'),
-  ('Burnout Check', 'burnout')
+  ('Anxiety Screening', 'ANXIETY'),
+  ('Depression Screening', 'DEPRESSION'),
+  ('Stress Check', 'STRESS'),
+  ('Sleep Quality', 'SLEEP'),
+  ('Burnout Check', 'BURNOUT')
 ON CONFLICT (category) DO NOTHING;
 
 -- ========================================
@@ -158,7 +160,7 @@ ON CONFLICT (category) DO NOTHING;
 INSERT INTO users (email, password_hash, full_name, phone_number, mindpoints_balance, member_since)
 SELECT
   'user' || gs || '@example.com',
-  '$2a$10$EG5iQPqNBpeOG4Yg1.QQO.1NHeNcqKMYZINaJqTgJNH.RnT1PWMHu',
+  '$2a$10$oqzg73KUPvHypmyASK4TAOgFHq6vOR4xD2lrxmPtvT0dgMfJrnxs6',
   'User ' || gs,
   '09' || LPAD(gs::text, 8, '0'),
   (RANDOM() * 2000)::int,
@@ -169,12 +171,12 @@ FROM generate_series(1, 200) gs;
 INSERT INTO experts (email, password_hash, full_name, title, hourly_rate, is_verified, gender)
 SELECT
   'expert' || gs || '@example.com',
-  '$2a$10$EG5iQPqNBpeOG4Yg1.QQO.1NHeNcqKMYZINaJqTgJNH.RnT1PWMHu',
+  '$2a$10$oqzg73KUPvHypmyASK4TAOgFHq6vOR4xD2lrxmPtvT0dgMfJrnxs6',
   'Expert ' || gs,
   (ARRAY['Clinical Psychologist','Therapist','Coach','Counselor','Psychiatrist'])[1 + (RANDOM() * 4)::int],
   (ARRAY[200000, 250000, 300000, 350000, 450000, 600000])[1 + (RANDOM() * 5)::int],
   (RANDOM() < 0.8),
-  (ARRAY['female','male','other'])[1 + (RANDOM() * 2)::int]
+  (ARRAY['FEMALE','MALE','OTHER'])[1 + (RANDOM() * 2)::int]
 FROM generate_series(1, 50) gs;
 
 -- ========================================
@@ -249,8 +251,8 @@ WITH picked AS (
   SELECT
     p.user_id,
     (SELECT price FROM subscriptions WHERE sub_id = p.sub_id),
-    'paid',
-    'subscription',
+    'PAID',
+    'SUBSCRIPTION',
     p.sub_id,
     (SELECT method_id FROM payment_methods ORDER BY RANDOM() LIMIT 1)
   FROM picked p
@@ -262,7 +264,7 @@ SELECT
   paid.related_id,
   paid.payment_id,
   (CURRENT_DATE + INTERVAL '30 days')::date,
-  'active'
+  'ACTIVE'
 FROM paid;
 
 -- MindPoint purchase payments for 120 users + credit transactions
@@ -282,8 +284,8 @@ WITH picked AS (
   SELECT
     c.user_id,
     c.price_vnd,
-    'paid',
-    'mindpoints',
+    'PAID',
+    'MINDPOINTS',
     c.option_id,
     (SELECT method_id FROM payment_methods ORDER BY RANDOM() LIMIT 1)
   FROM chosen c
@@ -293,7 +295,7 @@ INSERT INTO mind_point_transactions (user_id, points_amount, reason, related_pay
 SELECT
   chosen.user_id,
   chosen.points_amount,
-  'purchase',
+  'PURCHASE',
   pay.payment_id
 FROM chosen
 JOIN pay ON pay.user_id = chosen.user_id;
@@ -307,7 +309,7 @@ SELECT
   u.user_id,
   (SELECT expert_id FROM experts ORDER BY RANDOM() LIMIT 1),
   (ARRAY['Generalized Anxiety','Work Stress','Sleep Issues','Burnout','Low mood'])[1 + (RANDOM() * 4)::int],
-  'active'
+  'ACTIVE'
 FROM users u
 WHERE u.user_id <= 60;
 
@@ -333,7 +335,7 @@ SELECT
   (ARRAY['Reduce anxiety score','Improve sleep','Reduce stress level','Increase focus'])[1 + (RANDOM() * 3)::int],
   (ARRAY['8','6','5','4h','5h','3'])[1 + (RANDOM() * 5)::int],
   (ARRAY['3','2','7h','6h','1'])[1 + (RANDOM() * 4)::int],
-  (ARRAY['anxiety','depression','stress','sleep','burnout'])[1 + (RANDOM() * 4)::int]
+  (ARRAY['ANXIETY','DEPRESSION','STRESS','SLEEP','BURNOUT'])[1 + (RANDOM() * 4)::int]
 FROM treatment_plans tp
 WHERE (RANDOM() < 0.8)
 UNION ALL
@@ -342,7 +344,7 @@ SELECT
   'Build healthy habit',
   '0',
   '1',
-  (ARRAY['stress','sleep','burnout'])[1 + (RANDOM() * 2)::int]
+  (ARRAY['STRESS','SLEEP','BURNOUT'])[1 + (RANDOM() * 2)::int]
 FROM treatment_plans tp
 WHERE (RANDOM() < 0.35);
 
@@ -469,8 +471,8 @@ SELECT
   upd.expert_id,
   upd.availability_id,
   upd.start_time,
-  (ARRAY['pending','confirmed','completed','cancelled'])[1 + (RANDOM() * 3)::int],
-  (ARRAY['video','chat','voice'])[1 + (RANDOM() * 2)::int],
+  (ARRAY['PENDING','CONFIRMED','COMPLETED','CANCELLED'])[1 + (RANDOM() * 3)::int],
+  (ARRAY['VIDEO','CHAT','VOICE'])[1 + (RANDOM() * 2)::int],
   (ARRAY[0, 0, 50, 100, 150])[1 + (RANDOM() * 4)::int],
   'Mock session notes. ' || repeat('Note ', 10),
   (SELECT us.user_sub_id FROM user_subscriptions us WHERE us.user_id = (1 + (RANDOM() * 199)::int) ORDER BY RANDOM() LIMIT 1),
@@ -487,8 +489,8 @@ WITH ap AS (
   SELECT
     ap.user_id,
     (ARRAY[200000, 250000, 300000, 350000, 450000])[1 + (RANDOM() * 4)::int],
-    'paid',
-    'appointment',
+    'PAID',
+    'APPOINTMENT',
     ap.appt_id,
     (SELECT method_id FROM payment_methods ORDER BY RANDOM() LIMIT 1)
   FROM ap
@@ -504,7 +506,7 @@ INSERT INTO mind_point_transactions (user_id, points_amount, reason, related_pay
 SELECT
   a.user_id,
   -a.payment_amount_points,
-  'appointment_payment',
+  'APPOINTMENT_PAYMENT',
   a.payment_id
 FROM appointments a
 WHERE a.payment_amount_points IS NOT NULL AND a.payment_amount_points > 0 AND a.payment_id IS NOT NULL;
@@ -524,7 +526,7 @@ SELECT
     'Helpful but could be better.'
   ])[1 + (RANDOM() * 4)::int]
 FROM appointments a
-WHERE a.status = 'completed' AND RANDOM() < 0.7;
+WHERE a.status = 'COMPLETED' AND RANDOM() < 0.7;
 
 -- ========================================
 -- 10) Conversations (80) + messages (5 each = 400)
@@ -541,7 +543,7 @@ INSERT INTO chat_messages (conversation_id, sender_id, sender_type, message_cont
 SELECT
   c.conversation_id,
   CASE WHEN (m.idx % 2) = 0 THEN c.user_id ELSE c.expert_id END,
-  CASE WHEN (m.idx % 2) = 0 THEN 'user' ELSE 'expert' END,
+  CASE WHEN (m.idx % 2) = 0 THEN 'USER' ELSE 'EXPERT' END,
   CASE WHEN (m.idx % 2) = 0
     THEN 'User message #' || m.idx
     ELSE 'Expert reply #' || m.idx

@@ -1,5 +1,6 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.UserSubscriptionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,5 +30,7 @@ public class UserSubscription {
     private Payment payment;
 
     private LocalDate expiryDate;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private UserSubscriptionStatus status;
 }

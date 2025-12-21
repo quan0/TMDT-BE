@@ -5,10 +5,10 @@ import lombok.*;
 
 @Entity
 @Table(
-        name = "payment_methods",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_payment_methods_method_key", columnNames = {"method_key"})
-        }
+    name = "payment_methods",
+    uniqueConstraints = {
+            @UniqueConstraint(name = "uk_payment_methods_method_key", columnNames = {"method_key"})
+    }
 )
 @Data
 @NoArgsConstructor

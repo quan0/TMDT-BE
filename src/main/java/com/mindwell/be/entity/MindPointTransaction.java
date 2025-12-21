@@ -1,5 +1,6 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.MindPointTransactionReason;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +20,9 @@ public class MindPointTransaction {
     private User user;
 
     private Integer pointsAmount;
-    private String reason;
+
+    @Enumerated(EnumType.STRING)
+    private MindPointTransactionReason reason;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "related_payment_id")

@@ -1,5 +1,6 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.SubscriptionBillingCycle;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,9 @@ public class Subscription {
 
     private String name;
     private BigDecimal price;
-    private String billingCycle;
+
+    @Enumerated(EnumType.STRING)
+    private SubscriptionBillingCycle billingCycle;
 
     private String tierSubtitle;
     private String badgeLabel;

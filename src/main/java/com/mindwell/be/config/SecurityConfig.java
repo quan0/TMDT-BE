@@ -52,8 +52,10 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/error"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/experts/**").permitAll()
-                        .anyRequest().authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/checkout/options").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/payments/*/mock/redirect").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/experts/**").permitAll()
+                    .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

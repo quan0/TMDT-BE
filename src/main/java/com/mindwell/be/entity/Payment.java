@@ -1,5 +1,7 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.PaymentStatus;
+import com.mindwell.be.entity.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,8 +23,12 @@ public class Payment {
     private User user;
 
     private BigDecimal amount;
-    private String status;
-    private String paymentType;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
 
     private Integer relatedId;
 

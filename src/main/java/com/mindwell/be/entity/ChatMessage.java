@@ -1,5 +1,6 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.SenderType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +22,9 @@ public class ChatMessage {
     private Conversation conversation;
 
     private Integer senderId;
-    private String senderType;
+
+    @Enumerated(EnumType.STRING)
+    private SenderType senderType;
 
     @Column(columnDefinition = "text")
     private String messageContent;

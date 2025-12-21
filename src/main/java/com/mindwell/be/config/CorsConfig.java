@@ -24,6 +24,7 @@ public class CorsConfig {
         // 2. Cho phép các Header quan trọng (để gửi JWT Token)
         config.setAllowedHeaders(Arrays.asList(
                 "Origin", "Content-Type", "Accept", "Authorization",
+                "ngrok-skip-browser-warning",
                 "Cache-Control", "X-Requested-With"
         ));
 

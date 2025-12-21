@@ -1,5 +1,6 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.TreatmentPlanStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,5 +24,7 @@ public class TreatmentPlan {
     private Expert expert;
 
     private String diagnosisTitle;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private TreatmentPlanStatus status;
 }

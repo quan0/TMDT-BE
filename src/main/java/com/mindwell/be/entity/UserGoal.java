@@ -1,5 +1,6 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.AssessmentCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,8 +23,9 @@ public class UserGoal {
     private String currentValue;
     private String targetValue;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "assessment_category", insertable = false, updatable = false)
-    private String assessmentCategory;
+    private AssessmentCategory assessmentCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assessment_category", referencedColumnName = "category")

@@ -2,7 +2,7 @@ package com.mindwell.be.controller;
 
 import com.mindwell.be.dto.common.PageResponse;
 import com.mindwell.be.dto.appointment.AppointmentOptionsDto;
-import com.mindwell.be.dto.appointment.CreateAppointmentRequest;
+import com.mindwell.be.dto.appointment.CreateAppointmentDraftRequest;
 import com.mindwell.be.dto.appointment.CreateAppointmentResponse;
 import com.mindwell.be.dto.expert.AvailabilitySlotDto;
 import com.mindwell.be.dto.expert.ExpertCardDto;
@@ -92,15 +92,6 @@ public class ExpertController {
         return expertService.getFilterOptions();
     }
 
-        @GetMapping("/appointment-options")
-        @Operation(
-                        summary = "Get booking options",
-                        description = "Returns available platformId and existing serviceType values from DB for the booking form."
-        )
-        public AppointmentOptionsDto getAppointmentOptions() {
-                return appointmentService.getAppointmentOptions();
-        }
-
     @GetMapping("/{expertId}")
     @Operation(summary = "Get expert detail", description = "Returns data needed for the expert detail page (basic info + languages + specializations + rating stats).")
     public ExpertDetailDto getExpertDetail(
@@ -135,18 +126,19 @@ public class ExpertController {
     @PostMapping(value = "/{expertId}/appointments", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Book an appointment",
-            description = "Creates a pending appointment for the authenticated user using a selected availability slot.",
-            security = @SecurityRequirement(name = "bearerAuth")
+                        description = "Creates a draft appointment using a selected availability slot. Requires authentication.",
+                        security = @SecurityRequirement(name = "bearerAuth")
     )
     public CreateAppointmentResponse bookAppointment(
             @PathVariable Integer expertId,
             @AuthenticationPrincipal com.mindwell.be.service.security.UserPrincipal principal,
-            @Valid @RequestBody CreateAppointmentRequest req
+            @Valid @RequestBody CreateAppointmentDraftRequest req
     ) {
-        if (principal == null || principal.getUser() == null || principal.getUser().getUserId() == null) {
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED, "Unauthorized");
-        }
+                if (principal == null || principal.getUser() == null || principal.getUser().getUserId() == null) {
+                        throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED, "Unauthorized");
+                }
 
-        return appointmentService.createAppointment(expertId, principal.getUser().getUserId(), req);
+                Integer userId = principal.getUser().getUserId();
+                return appointmentService.createAppointmentDraft(expertId, userId, req.availabilityId());
     }
 }

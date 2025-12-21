@@ -1,5 +1,7 @@
 package com.mindwell.be.entity;
 
+import com.mindwell.be.entity.enums.AppointmentServiceType;
+import com.mindwell.be.entity.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,9 +31,23 @@ public class Appointment {
     private ExpertAvailability availability;
 
     private LocalDateTime startTime;
-    private String status;
-    private String serviceType;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private AppointmentServiceType serviceType;
     private Integer paymentAmountPoints;
+
+    private String contactFullName;
+    private String contactEmail;
+    private String contactPhone;
+
+    @Column(columnDefinition = "text")
+    private String meetingJoinUrl;
 
     @Column(columnDefinition = "text")
     private String expertSessionNotes;
@@ -51,4 +67,18 @@ public class Appointment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "platform_id")
     private MeetingPlatform platform;
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        if (createdAt == null) {
+            createdAt = now;
+        }
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

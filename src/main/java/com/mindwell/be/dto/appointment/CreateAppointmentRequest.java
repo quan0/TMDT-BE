@@ -13,6 +13,15 @@ public record CreateAppointmentRequest(
         String serviceType,
 
         @Schema(description = "Meeting platform id (optional)", example = "1")
-        Integer platformId
+        Integer platformId,
+
+        @Schema(description = "Contact full name (optional; defaults from user profile)", example = "Nguyễn Minh Anh")
+        String contactFullName,
+
+        @Schema(description = "Contact email (optional; defaults from user profile)", example = "user@example.com")
+        String contactEmail,
+
+        @Schema(description = "Contact phone (optional; defaults from user profile)", example = "0912345678")
+        String contactPhone
 ) {
 }

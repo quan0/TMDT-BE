@@ -11,6 +11,9 @@ public record CreateAppointmentResponse(
         Integer userId,
         Integer availabilityId,
         LocalDateTime startTime,
-        String status
+        String status,
+        Integer totalAmountPoints,
+        String serviceType,
+        Integer platformId
 ) {
 }

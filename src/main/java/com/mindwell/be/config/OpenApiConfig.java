@@ -12,7 +12,13 @@ import org.springframework.context.annotation.Configuration;
         info = @Info(
                 title = "MindWell API",
                 version = "v1"
-        )
+        ),
+        servers ={
+                @io.swagger.v3.oas.annotations.servers.Server(
+                        url = "/", // Để dấu "/" giúp Swagger tự động lấy domain hiện tại của trình duyệt
+                        description = "Default Server URL"
+                )
+        }
 )
 @SecurityScheme(
         name = "bearerAuth",
