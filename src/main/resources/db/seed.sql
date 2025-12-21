@@ -378,10 +378,35 @@ WHERE (RANDOM() < 0.35);
 
 INSERT INTO blog_posts (title, content, author_expert_id)
 SELECT
-  'Post #' || gs || ' - ' || (ARRAY['Mindfulness','Stress','Sleep','Habits','Career'])[1 + (RANDOM() * 4)::int],
-  'This is mock content for post #' || gs || '. ' || repeat('Lorem ipsum ', 10),
+  'Post #' || gs || ' - ' || t.topic,
+  (
+    E'Trong cuộc sống hiện đại đầy áp lực, nhiều người trong chúng ta có thể gặp phải các vấn đề về sức khỏe tinh thần mà không nhận ra.\n'
+    || E'Việc nhận biết sớm các dấu hiệu cảnh báo là vô cùng quan trọng để có thể tìm kiếm sự hỗ trợ kịp thời.\n\n'
+    || E'## 1. Thay đổi trong cảm xúc\n'
+    || E'Cảm giác buồn bã kéo dài, mất hứng thú với những hoạt động yêu thích, hoặc cảm xúc thất thường là những dấu hiệu đầu tiên cần chú ý.\n'
+    || E'Nếu tình trạng này kéo dài hơn 2 tuần, bạn nên cân nhắc tìm kiếm sự hỗ trợ chuyên nghiệp.\n\n'
+    || E'## 2. Thay đổi thói quen ngủ\n'
+    || E'Mất ngủ kéo dài, ngủ quá nhiều, hoặc giấc ngủ không sâu giấc đều là những dấu hiệu quan trọng.\n'
+    || E'Giấc ngủ và sức khỏe tinh thần có mối liên hệ mật thiết với nhau.\n\n'
+    || E'> Giấc ngủ là nền tảng của sức khỏe tinh thần. Khi giấc ngủ bị ảnh hưởng, toàn bộ sức khỏe tâm lý của chúng ta có thể bị lung lay.\n\n'
+    || E'## 3. Thay đổi về thể chất\n'
+    || E'Đau đầu thường xuyên, đau bụng, mệt mỏi kéo dài mà không rõ nguyên nhân có thể là biểu hiện của stress hoặc lo âu.\n'
+    || E'Cơ thể và tâm trí luôn có mối liên hệ chặt chẽ.\n\n'
+    || E'## 4. Khó tập trung\n'
+    || E'Bạn có thể nhận thấy mình khó tập trung khi làm việc/học tập, hay quên, hoặc dễ bị phân tâm.\n\n'
+    || E'### Gợi ý nhỏ\n'
+    || E'- Dành 5–10 phút mỗi ngày để hít thở sâu\n'
+    || E'- Giảm caffeine vào buổi chiều\n'
+    || E'- Thử viết nhật ký cảm xúc (2–3 dòng/ngày)\n\n'
+    || E'---\n'
+    || E'**Chủ đề hôm nay:** ' || t.topic || E'\n'
+    || E'**Bài viết mẫu:** #' || gs || E'\n'
+  ),
   (SELECT expert_id FROM experts ORDER BY RANDOM() LIMIT 1)
-FROM generate_series(1, 100) gs;
+FROM generate_series(1, 100) gs
+CROSS JOIN LATERAL (
+  SELECT (ARRAY['Mindfulness','Stress','Sleep','Habits','Career'])[1 + (RANDOM() * 4)::int] AS topic
+) t;
 
 -- Each post has 1-2 categories
 INSERT INTO post_categories (post_id, category_id)

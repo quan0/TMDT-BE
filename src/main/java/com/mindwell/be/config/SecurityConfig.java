@@ -53,7 +53,8 @@ public class SecurityConfig {
                                 "/error"
                         ).permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/checkout/options").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/payments/*/mock/redirect").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/payments/*/mock/redirect").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/blog/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/experts/**").permitAll()
                     .anyRequest().authenticated()
                 )
