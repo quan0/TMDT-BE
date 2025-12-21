@@ -25,7 +25,6 @@ This project loads `.env` via Spring Boot config import (`spring.config.import`)
 - Start:
 
 ```powershell
-cd F:\Study\TMDT\TMDTBackend
 .\mvnw.cmd clean spring-boot:run
 ```
 
@@ -62,21 +61,3 @@ Typical values:
 - `SQL_INIT_MODE=always`
   - Runs `seed.sql` on every app start.
   - WARNING: the seed script usually truncates tables / resets data. Do not use if you need to keep existing data.
-
-## Common problems
-
-### `FATAL: password authentication failed for user "postgres"`
-
-- Verify your `.env` values: `DB_USERNAME`, `DB_PASSWORD`, `DB_URL`.
-- Confirm the password by connecting with psql:
-
-```powershell
-$env:PGPASSWORD = "<your_password>"
-& "C:\Program Files\PostgreSQL\17\bin\psql.exe" -h localhost -U postgres -d tmdt -c "select 1;"
-Remove-Item Env:PGPASSWORD -ErrorAction SilentlyContinue
-```
-
-### `.env` not being applied
-
-- Ensure `.env` is at the project root (same folder as `pom.xml`).
-- This repo uses `spring.config.import: optional:file:.env[.properties]` to load it.
