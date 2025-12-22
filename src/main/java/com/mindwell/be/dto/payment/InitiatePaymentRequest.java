@@ -16,7 +16,7 @@ public record InitiatePaymentRequest(
         Integer relatedId,
 
         @NotBlank
-        @Schema(description = "Payment method key", example = "momo")
+        @Schema(description = "Payment method key", example = "vnpay")
         String methodKey,
 
         @Schema(description = "Meeting platform id selected on checkout (appointment only)", example = "1")

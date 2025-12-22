@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class CheckoutService {
     private final UserRepository userRepository;
     private final MindPointTransactionRepository mindPointTransactionRepository;
     private final ExpertAvailabilityRepository expertAvailabilityRepository;
+    private final VnpayService vnpayService;
 
     @Transactional(readOnly = true)
     public CheckoutOptionsDto getCheckoutOptions() {
@@ -94,7 +96,7 @@ public class CheckoutService {
     }
 
     @Transactional
-    public InitiateAppointmentPaymentResponse payAppointment(Integer apptId, Integer userId, InitiateAppointmentPaymentRequest req) {
+    public InitiateAppointmentPaymentResponse payAppointment(Integer apptId, Integer userId, InitiateAppointmentPaymentRequest req, String clientIp) {
         Appointment appt = appointmentRepository.findById(apptId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found"));
 
@@ -187,9 +189,15 @@ public class CheckoutService {
 
         int points = appt.getPaymentAmountPoints() == null ? 0 : appt.getPaymentAmountPoints();
 
+        BigDecimal amountVnd = null;
+        if (!"mindpoints".equals(methodKey)) {
+            // Appointment pricing is computed in VND then converted to points with 1 point ~= 1000 VND.
+            amountVnd = BigDecimal.valueOf(points).multiply(BigDecimal.valueOf(1000));
+        }
+
         Payment payment = Payment.builder()
                 .user(appt.getUser())
-                .amount(null)
+                .amount(amountVnd)
             .status(PaymentStatus.PENDING)
             .paymentType(PaymentType.APPOINTMENT)
                 .relatedId(appt.getApptId())
@@ -244,6 +252,8 @@ public class CheckoutService {
         String redirectUrl;
         if ("mindpoints".equals(methodKey)) {
             redirectUrl = "/api/v1/checkout/appointments/" + apptId + "/confirmation";
+        } else if ("vnpay".equals(methodKey)) {
+            redirectUrl = vnpayService.createPaymentUrl(payment, clientIp);
         } else {
             redirectUrl = "/api/v1/payments/" + payment.getPaymentId() + "/mock/redirect";
         }

@@ -61,3 +61,13 @@ Typical values:
 - `SQL_INIT_MODE=always`
   - Runs `seed.sql` on every app start.
   - WARNING: the seed script usually truncates tables / resets data. Do not use if you need to keep existing data.
+
+## Thông tin thẻ test vnpay
+
+| Thông tin | Chi tiết |
+| :--- | :--- |
+| **Ngân hàng** | NCB |
+| **Số thẻ** | 9704198526191432198 |
+| **Tên chủ thẻ** | NGUYEN VAN A |
+| **Ngày phát hành** | 07/15 |
+| **Mật khẩu OTP** | 123456 |

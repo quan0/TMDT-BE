@@ -54,6 +54,8 @@ public class SecurityConfig {
                         ).permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/checkout/options").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/payments/*/mock/redirect").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/payments/vnpay/return").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/payments/vnpay/ipn").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/blog/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/subscriptions/plans").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/experts/**").permitAll()

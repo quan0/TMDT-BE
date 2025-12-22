@@ -15,6 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+import com.mindwell.be.util.IpAddressUtils;
+
 @RestController
 @RequestMapping(value = "/checkout", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
@@ -57,12 +61,13 @@ public class CheckoutController {
     public InitiateAppointmentPaymentResponse payAppointment(
             @PathVariable Integer apptId,
             @AuthenticationPrincipal com.mindwell.be.service.security.UserPrincipal principal,
-            @Valid @RequestBody InitiateAppointmentPaymentRequest req
+            @Valid @RequestBody InitiateAppointmentPaymentRequest req,
+            HttpServletRequest request
     ) {
         if (principal == null || principal.getUser() == null || principal.getUser().getUserId() == null) {
             throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
-        return checkoutService.payAppointment(apptId, principal.getUser().getUserId(), req);
+        return checkoutService.payAppointment(apptId, principal.getUser().getUserId(), req, IpAddressUtils.resolveClientIp(request));
     }
 
     @GetMapping("/appointments/{apptId}/confirmation")

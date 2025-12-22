@@ -11,6 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+import com.mindwell.be.util.IpAddressUtils;
+
 import java.util.List;
 
 @RestController
@@ -70,11 +74,12 @@ public class SubscriptionController {
     public InitiateSubscriptionPaymentResponse initiatePayment(
             @PathVariable Integer subId,
             @AuthenticationPrincipal com.mindwell.be.service.security.UserPrincipal principal,
-            @Valid @RequestBody InitiateSubscriptionPaymentRequest req
+            @Valid @RequestBody InitiateSubscriptionPaymentRequest req,
+            HttpServletRequest request
     ) {
         if (principal == null || principal.getUser() == null || principal.getUser().getUserId() == null) {
             throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
-        return subscriptionService.initiateSubscriptionPayment(subId, principal.getUser().getUserId(), req);
+        return subscriptionService.initiateSubscriptionPayment(subId, principal.getUser().getUserId(), req, IpAddressUtils.resolveClientIp(request));
     }
 }

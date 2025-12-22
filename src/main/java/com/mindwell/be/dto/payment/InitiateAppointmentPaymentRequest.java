@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 @Schema(name = "InitiateAppointmentPaymentRequest")
 public record InitiateAppointmentPaymentRequest(
         @NotBlank
-        @Schema(description = "Payment method key", example = "momo")
+        @Schema(description = "Payment method key", example = "vnpay")
         String methodKey,
 
         @Schema(description = "Meeting platform id selected on checkout (optional)", example = "1")

@@ -33,6 +33,7 @@ public class SubscriptionService {
     private final PaymentMethodRepository paymentMethodRepository;
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
+    private final VnpayService vnpayService;
 
     @Transactional(readOnly = true)
     public List<SubscriptionPlanDto> listPlans() {
@@ -63,7 +64,7 @@ public class SubscriptionService {
     }
 
     @Transactional
-    public InitiateSubscriptionPaymentResponse initiateSubscriptionPayment(Integer subId, Integer userId, InitiateSubscriptionPaymentRequest req) {
+    public InitiateSubscriptionPaymentResponse initiateSubscriptionPayment(Integer subId, Integer userId, InitiateSubscriptionPaymentRequest req, String clientIp) {
         Subscription plan = subscriptionRepository.findById(subId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Subscription plan not found"));
 
@@ -102,7 +103,12 @@ public class SubscriptionService {
 
         payment = paymentRepository.save(payment);
 
-        String redirectUrl = "/api/v1/payments/" + payment.getPaymentId() + "/mock/redirect";
+        String redirectUrl;
+        if ("vnpay".equals(methodKey)) {
+            redirectUrl = vnpayService.createPaymentUrl(payment, clientIp);
+        } else {
+            redirectUrl = "/api/v1/payments/" + payment.getPaymentId() + "/mock/redirect";
+        }
         return new InitiateSubscriptionPaymentResponse(
                 payment.getPaymentId(),
                 payment.getStatus() == null ? null : payment.getStatus().toJson(),
