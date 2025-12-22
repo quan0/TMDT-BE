@@ -34,6 +34,10 @@ This project loads `.env` via Spring Boot config import (`spring.config.import`)
 .\mvnw.cmd -DskipTests spring-boot:run
 ```
 
+## Docker
+
+Docker Compose (PostgreSQL + backend): see [DOCKER.md](DOCKER.md).
+
 ## Swagger / OpenAPI
 
 After the app starts (default port `8000`):

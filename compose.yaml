@@ -1,9 +1,39 @@
 services:
   postgres:
-    image: 'postgres:latest'
+    image: postgres:17
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      POSTGRES_DB: ${POSTGRES_DB:-tmdt}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - '5432'
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-tmdt}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.docker
+    environment:
+      # Override DB URL for container networking.
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-tmdt}
+      DB_USERNAME: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PORT: ${PORT:-8000}
+      SERVER_ADDRESS: 0.0.0.0
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:${PORT:-8000}}
+    ports:
+      - "${PORT:-8000}:8000"
+
+volumes:
+  postgres_data:
