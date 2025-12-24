@@ -31,8 +31,6 @@ Notes:
 From the project folder:
 
 ```powershell
-cd f:\Study\TMDT\TMDTBackend
-
 docker compose -f compose.yaml up -d --build
 ```
 
